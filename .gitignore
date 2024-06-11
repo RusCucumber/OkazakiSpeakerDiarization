@@ -7,3 +7,5 @@
 .vscode/
 
 pyannote_access_token.json
+
+__pycache__
