@@ -3,3 +3,5 @@
 !/data/**/.gitkeep
 
 /results/models/**
+
+pyannote_access_token.json
