@@ -126,6 +126,7 @@ pyannote.database==5.1.0
 pyannote.metrics==3.2.1
 pyannote.pipeline==3.0.1
 pycparser==2.22
+pydub==0.25.1
 Pygments==2.18.0
 pyparsing==3.1.2
 python-dateutil==2.9.0.post0
@@ -170,6 +171,7 @@ torch-audiomentations==0.11.1
 torch-pitch-shift==1.2.4
 torchaudio==2.3.1
 torchmetrics==1.4.0.post0
+torchvision==0.18.1
 tornado==6.4.1
 tqdm==4.66.4
 traitlets==5.14.3
