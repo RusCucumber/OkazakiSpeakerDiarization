@@ -4,4 +4,6 @@
 
 /results/models/**
 
+.vscode/
+
 pyannote_access_token.json
