@@ -182,3 +182,48 @@ def to_str(
         utterance_col: str ="Text"
 ) -> str:
     return " ".join(df_transcript[utterance_col])
+
+def convert_turnwise(
+        df: pd.DataFrame, 
+        speaker_col: str ="speaker", 
+        end_time_col: str ="end_time", 
+        transcript_col: str ="transcript"
+) -> pd.DataFrame:
+    data = []
+    columns = df.columns.values
+
+    prev_speaker = df.at[0, speaker_col]
+    utterances = []
+    for _, row in df.iterrows():
+        if prev_speaker == row.speaker:
+            utterances.append(row)
+        else:
+            new_row = generate_new_row(utterances, columns, end_time_col, transcript_col)
+            data.append(new_row)
+            utterances = [row]
+        prev_speaker = row.speaker
+
+    new_row = generate_new_row(utterances, columns, end_time_col, transcript_col)
+    data.append(new_row)
+
+    return pd.DataFrame(data, columns=columns)
+
+
+def generate_new_row(
+        utterances: list, 
+        columns: list, 
+        end_time_col: str ="end_time", 
+        transcript_col: str ="transcript"
+) -> list:
+    row = []
+    for col in columns:
+        if col == end_time_col:
+            val = getattr(utterances[-1], col)
+        elif col == transcript_col:
+            val = " ".join([getattr(u, col) for u in utterances if str(getattr(u, col)) != "nan"])
+        else:
+            val = getattr(utterances[0], col)
+            
+        row.append(val)
+
+    return row
