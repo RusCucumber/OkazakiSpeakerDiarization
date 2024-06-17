@@ -195,13 +195,13 @@ def convert_turnwise(
     prev_speaker = df.at[0, speaker_col]
     utterances = []
     for _, row in df.iterrows():
-        if prev_speaker == row.speaker:
+        if prev_speaker == getattr(row, speaker_col):
             utterances.append(row)
         else:
             new_row = generate_new_row(utterances, columns, end_time_col, transcript_col)
             data.append(new_row)
             utterances = [row]
-        prev_speaker = row.speaker
+        prev_speaker = getattr(row, speaker_col)
 
     new_row = generate_new_row(utterances, columns, end_time_col, transcript_col)
     data.append(new_row)
