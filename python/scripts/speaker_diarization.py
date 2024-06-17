@@ -7,13 +7,14 @@ sys.path.append(
     str(Path.cwd())
 )
 
+import pandas as pd
 import torch
 import pyannote
 from pyannote.audio import Pipeline
 
 from python.modules.audio_utils import is_wav_file, convert_and_get_wav_path
 
-RESULT_DIR = Path("result")
+RESULT_DIR = Path("results/tables")
 
 PYANNOTE_ACCESS_TOKEN_PATH = Path("environment/python/pyannote_access_token.json")
 
@@ -55,5 +56,13 @@ if __name__ == "__main__":
 
     diarization = diarize(data_path, device)
 
+    columns = ["Start", "Stop", "Speaker"]
+    data = []
     for turn, _, speaker in diarization.itertracks(yield_label=True):
-        print(f"start={turn.start:.1f}s stop={turn.end:.1f}s speaker_{speaker}")
+        row = [turn.start, turn.end, speaker]
+        data.append(row)
+    
+    df_diarization = pd.DataFrame(data, columns=columns)
+    
+    save_path = save_dir / f"{data_path.stem}_speaker_diarization.csv"
+    df_diarization.to_csv(save_path, index=False)
