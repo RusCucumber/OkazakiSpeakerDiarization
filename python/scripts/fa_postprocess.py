@@ -85,13 +85,42 @@ def fill_startoken(
 
     return df_fa_star_filled
 
+def df_word_2_sent(
+        df_transcript: pd.DataFrame,
+        df_fa_w: pd.DataFrame
+) -> pd.DataFrame:
+    data = []
+    columns = ["text", "start_time", "end_time"]
+
+    start_idx = 0
+    for idx in df_transcript.index:
+        text = df_transcript.at[idx, "Text"]
+
+        words = text.split(" ")
+        end_idx = start_idx + len(words) - 1
+
+        start_time = df_fa_w.at[start_idx, "start_time"]
+        end_time = df_fa_w.at[end_idx, "end_time"]
+
+        row = [text, start_time, end_time]
+        data.append(row)
+
+        start_idx = end_idx + 1
+
+    df_fa_s = pd.DataFrame(data, columns=columns)
+    return df_fa_s
+        
+
 if __name__ == "__main__":
     transcript_path, fa_path, save_dir = read_arguments()
     df_transcript = load_transcript_from_revtxt(transcript_path)
     df_transcript = preprocess(df_transcript)
     df_fa = pd.read_csv(fa_path)
 
-    df_fa = fill_startoken(df_transcript, df_fa)
+    df_fa_w = fill_startoken(df_transcript, df_fa)
+    df_fa_s = df_word_2_sent(df_transcript, df_fa_w)
 
-    save_path = save_dir / f"{transcript_path.stem}_fa.csv"
-    df_fa.to_csv(save_path, index=False)
+    save_path_w = save_dir / f"{transcript_path.stem}_fa_word.csv"
+    save_path_s = save_dir / f"{transcript_path.stem}_fa_sent.csv"
+    df_fa_w.to_csv(save_path_w, index=False)
+    df_fa_s.to_csv(save_path_s, index=False)
